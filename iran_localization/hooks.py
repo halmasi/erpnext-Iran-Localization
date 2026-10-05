@@ -253,3 +253,22 @@ app_license = "mit"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+fixtures = [
+    {
+        "dt": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Company-iran_localization_section",
+                    "Company-iran_national_id",
+                    "Company-iran_economic_code",
+                    "Company-iran_registration_number",
+                    "Company-iran_postal_code",
+                ],
+            ]
+        ],
+    }
+]
