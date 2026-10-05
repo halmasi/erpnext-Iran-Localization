@@ -282,3 +282,9 @@ fixtures = [
         ],
     }
 ]
+
+doc_events = {
+    "Company": {"validate": "iran_localization.validation.validate_iran_fields"},
+    "Customer": {"validate": "iran_localization.validation.validate_iran_fields"},
+    "Supplier": {"validate": "iran_localization.validation.validate_iran_fields"},
+}
