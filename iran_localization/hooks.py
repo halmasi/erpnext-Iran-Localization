@@ -280,7 +280,11 @@ fixtures = [
                 ],
             ]
         ],
-    }
+    },
+    {
+        "dt": "DocType",
+        "filters": [["name", "=", "Iran Localization Settings"]],
+    },
 ]
 
 doc_events = {
