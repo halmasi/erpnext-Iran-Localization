@@ -291,4 +291,7 @@ doc_events = {
     "Company": {"validate": "iran_localization.validation.validate_iran_fields"},
     "Customer": {"validate": "iran_localization.validation.validate_iran_fields"},
     "Supplier": {"validate": "iran_localization.validation.validate_iran_fields"},
+    "Item Price": {
+        "on_update": "iran_localization.pricing.update_product_prices_from_raw_material"
+    },
 }
