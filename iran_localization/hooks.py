@@ -255,43 +255,77 @@ app_license = "mit"
 
 
 fixtures = [
-    {
-        "dt": "Custom Field",
-        "filters": [
-            [
-                "name",
-                "in",
-                [
-                    "Company-iran_localization_section",
-                    "Company-iran_national_id",
-                    "Company-iran_economic_code",
-                    "Company-iran_registration_number",
-                    "Company-iran_postal_code",
-                    "Customer-iran_tax_section",
-                    "Customer-iran_national_id",
-                    "Customer-iran_economic_code",
-                    "Customer-iran_registration_number",
-                    "Customer-iran_postal_code",
-                    "Supplier-iran_tax_section",
-                    "Supplier-iran_national_id",
-                    "Supplier-iran_economic_code",
-                    "Supplier-iran_registration_number",
-                    "Supplier-iran_postal_code",
-                ],
-            ]
-        ],
-    },
-    {
-        "dt": "DocType",
-        "filters": [["name", "=", "Iran Localization Settings"]],
-    },
+	{
+		"dt": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Company-iran_localization_section",
+					"Company-iran_national_id",
+					"Company-iran_economic_code",
+					"Company-iran_registration_number",
+					"Company-iran_postal_code",
+					"Customer-iran_tax_section",
+					"Customer-iran_national_id",
+					"Customer-iran_economic_code",
+					"Customer-iran_registration_number",
+					"Customer-iran_postal_code",
+					"Supplier-iran_tax_section",
+					"Supplier-iran_national_id",
+					"Supplier-iran_economic_code",
+					"Supplier-iran_registration_number",
+					"Supplier-iran_postal_code",
+					"Sales Order-iran_commerce_request_id",
+					"Sales Order-iran_commerce_payload_hash",
+					"Sales Invoice-iran_invoice_section",
+					"Sales Invoice-iran_official_invoice",
+					"Sales Invoice-iran_seller_national_id",
+					"Sales Invoice-iran_seller_economic_code",
+					"Sales Invoice-iran_seller_registration_number",
+					"Sales Invoice-iran_seller_postal_code",
+					"Sales Invoice-iran_buyer_national_id",
+					"Sales Invoice-iran_buyer_economic_code",
+					"Sales Invoice-iran_buyer_registration_number",
+					"Sales Invoice-iran_buyer_postal_code",
+					"Item-iran_tax_item_id",
+					"Item-iran_publish_to_commerce",
+				],
+			]
+		],
+	},
 ]
 
 doc_events = {
-    "Company": {"validate": "iran_localization.validation.validate_iran_fields"},
-    "Customer": {"validate": "iran_localization.validation.validate_iran_fields"},
-    "Supplier": {"validate": "iran_localization.validation.validate_iran_fields"},
-    "Item Price": {
-        "on_update": "iran_localization.pricing.update_product_prices_from_raw_material"
-    },
+	"Company": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
+	"Customer": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
+	"Supplier": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
+	"Item Price": {
+		"on_update": "iran_localization.modules.pricing.service.update_product_prices_from_raw_material"
+	},
+}
+
+required_apps = ["erpnext"]
+after_install = "iran_localization.install.after_install"
+after_migrate = "iran_localization.install.after_migrate"
+doctype_js = {
+	"Sales Invoice": "public/js/sales_invoice.js",
+	"Iran Localization Settings": "public/js/settings.js",
+	"Iran Integration Request": "public/js/integration_request.js",
+}
+iran_sms_providers = [
+	"iran_localization.modules.sms.providers.mock.MockSMSProvider",
+	"iran_localization.modules.sms.providers.kavenegar.KavenegarProvider",
+]
+iran_taxpayer_providers = [
+	"iran_localization.modules.taxpayer.providers.http_gateway.HTTPGatewayProvider",
+	"iran_localization.modules.taxpayer.providers.mock.MockTaxpayerProvider",
+]
+jinja = {
+	"methods": ["iran_localization.modules.official_invoice.service.invoice_context"],
+}
+
+doc_events["Sales Invoice"] = {
+	"validate": "iran_localization.modules.official_invoice.service.validate_invoice"
 }

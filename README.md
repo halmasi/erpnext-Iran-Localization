@@ -1,33 +1,148 @@
-### Iran Localization
+# Iran Localization
 
-Iran localization for ERPNext
+افزونهٔ ماژولار بومی‌سازی ایران برای ERPNext / Frappe 15، نسخهٔ `0.1.0`.
+ساختار، تنظیمات و کد داخل همین افزونه نگهداری می‌شوند؛ هستهٔ ERPNext تغییر نمی‌کند.
 
-### Installation
+برای توضیح مرحله‌به‌مرحلهٔ کار با همهٔ ماژول‌ها، [راهنمای کامل فارسی](docs/USER_GUIDE_FA.md) را بخوانید.
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+## امکانات
 
-```bash
-cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch develop
-bench install-app iran_localization
+| ماژول | امکانات | کلید فعال‌سازی |
+|---|---|---|
+| اطلاعات ایران | شناسه ملی، کد اقتصادی، شماره ثبت، کد پستی شرکت/مشتری/تأمین‌کننده | همیشه در دسترس |
+| اعتبارسنجی | تبدیل ارقام فارسی/عربی، کنترل قالب، کنترل اختیاری رقم کنترل اشخاص حقیقی و حقوقی | `enable_core_validation` |
+| قیمت‌گذاری | به‌روزرسانی هزینهٔ BOM و قیمت واحد، BOM چندسطحی، شاخه‌های مشترک، تشخیص چرخه | `enable_pricing_automation` |
+| صورتحساب | ذخیرهٔ مشخصات ثبتی طرفین هنگام صدور، چاپ فارسی RTL با تاریخ شمسی | `enable_official_invoice_module` |
+| پیامک | صف و سابقهٔ درخواست، ارائه‌دهندهٔ آزمایشی و کاوه‌نگار | `enable_sms` |
+| مؤدیان | صف جدا از حسابداری، ارائه‌دهندهٔ آزمایشی، درگاه HTTP قابل تعویض | `enable_taxpayer_system` |
+| فروشگاه/API | کاتالوگ منتخب، محاسبهٔ قیمت/مالیات سمت سرور، سفارش پیش‌نویس با شناسهٔ درخواست یکتا | `enable_commerce_api` |
+
+ماژول‌ها در نصب جدید خاموش‌اند. انتخاب Price List، مشتری، شرکت و ارائه‌دهنده مخصوص هر سایت است.
+تنظیمات قبلی هنگام ارتقا حفظ می‌شوند؛ کلیدهای قدیمی فقط برای سازگاری نگهداری شده و از فرم مخفی‌اند.
+
+## نصب و ارتقا
+
+ERPNext باید از قبل روی سایت نصب شده باشد. در محیط Bench:
+
+```sh
+bench get-app /absolute/path/to/iran_localization
+bench --site YOUR_SITE install-app iran_localization
+bench --site YOUR_SITE migrate
+bench build --app iran_localization
 ```
 
-### Contributing
+برای ارتقای نصب موجود، وابستگی‌های `pyproject.toml` را نصب و migration اجرا کنید:
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
-
-```bash
-cd apps/iran_localization
-pre-commit install
+```sh
+./env/bin/python -m pip install -e apps/iran_localization
+bench --site YOUR_SITE migrate
+bench build --app iran_localization
 ```
 
-Pre-commit is configured to use the following tools for checking and formatting your code:
+از Workspace «Iran Localization» وارد تنظیمات شوید. schema تنظیمات یک DocType استاندارد است؛
+مقادیر آن در `tabSingles` و رمزها در محل رمزگذاری‌شدهٔ Frappe قرار می‌گیرند.
+تنظیمات سایت را به fixture تبدیل نکنید. `export-fixtures` فقط فیلدهای سفارشی افزونه را صادر می‌کند.
 
-- ruff
-- eslint
-- prettier
-- pyupgrade
+## قیمت‌گذاری
 
-### License
+Price List خرید مواد اولیه و Price List فروش محصولات را انتخاب کنید؛ باید متفاوت و فعال باشند.
+BOMهای فعال و Submit‌شده هزینه‌گذاری می‌شوند؛ فقط BOM پیش‌فرض قیمت فروش محصول را منتشر می‌کند.
+برای مواد انبارشدنی از `Price List` و برای زیرمونتاژها از هزینهٔ BOM استفاده کنید.
+ERPNext نرخ مواد غیرانبارشدنی را در `Update Cost` خودکار دوباره دریافت نمی‌کند.
 
-mit
+```text
+قیمت واحد = (هزینهٔ کل BOM / مقدار خروجی BOM)
+           × (1 + سربار / 100) × (1 + حاشیه سود / 100)
+```
+
+وابستگی‌ها پیش از تغییر قیمت مرتب می‌شوند؛ چرخه با خطای روشن متوقف می‌شود.
+قیمت جاری عمومی در همان UOM به‌روز می‌شود؛ قیمت اختصاصی مشتری/تأمین‌کننده/بچ و قیمت آینده بازنویسی نمی‌شود.
+برای تبدیل ارز، نرخ معتبر در ERPNext لازم است. قوانین قیمت‌گذاری فروش ERPNext همچنان جداگانه اعمال می‌شوند.
+
+## صورتحساب فارسی
+
+ماژول را فعال و در Sales Invoice گزینهٔ «صورتحساب رسمی ایران» را انتخاب کنید.
+شناسه ملی و کد پستی طرفین برای این گزینه لازم‌اند؛ فاکتور معمولی چنین الزامی ندارد.
+مشخصات ثبتی در فاکتور ذخیره می‌شوند تا تغییر پروندهٔ مشتری، مشخصات چاپ فاکتور صادرشده را عوض نکند.
+قالب `Iran Official Invoice` از مبالغ، مالیات‌ها و گرد کردن خود ERPNext استفاده می‌کند؛ نرخ مالیات ثابت ندارد.
+
+این قالب، چاپ فارسی صورتحساب است. فعال‌سازی یا چاپ آن به معنی تأیید قانونی/پذیرش صورتحساب در سامانهٔ مؤدیان نیست.
+طبقه‌بندی، الگوی مالیاتی، شناسه‌های کالا، امضا، رمزگذاری و مقررات جاری باید توسط adapter معتبر مؤدیان پوشش داده شوند.
+
+## پیامک و مؤدیان
+
+کلید ارائه‌دهنده را در تنظیمات وارد کنید؛ دکمهٔ «Installed Providers» فهرست نصب‌شده را نشان می‌دهد.
+`mock` هیچ ارسال واقعی انجام نمی‌دهد و نتیجه را `Simulated` ثبت می‌کند.
+کاوه‌نگار به `sms_api_key` و `sms_sender` نیاز دارد. برای تعویض سرویس، adapter دیگری نصب و کلید آن را انتخاب کنید.
+
+در تنظیمات از «Queue SMS»، یا در فاکتور Submit‌شده از «Queue Taxpayer Invoice» استفاده کنید.
+درخواست ابتدا `Pending` می‌شود؛ ارسال فقط با «Send Request» انجام می‌شود.
+ماژول مؤدیان به Save/Submit فاکتور وصل نیست و خاموش بودن یا خرابی آن مانع عملیات عادی ERP نمی‌شود.
+
+درخواست ارسالی و محتوای آن قابل ویرایش مستقیم نیستند. تکرار همان شناسهٔ درخواست، ارسال مجدد ایجاد نمی‌کند.
+تغییر ارائه‌دهنده یا اطلاعات حساب، ارسال درخواست قدیمی را متوقف می‌کند؛ با «Refresh Provider» می‌توان
+درخواست Pending یا شکستِ تأییدشده را با تنظیمات جدید آماده کرد. سابقهٔ تغییر در Version نگهداری می‌شود.
+درخواست `Sent` یا `Simulated` دوباره ارسال نمی‌شود.
+
+Timeout یا پاسخ نامشخص `Unknown` است و خودکار retry نمی‌شود. بعد از بررسی پنل ارائه‌دهنده،
+«Reconcile Delivery» نتیجه را ثبت می‌کند. فقط شکستِ تأییدشده با «Retry Request» قابل تلاش مجدد است.
+`Sent` یعنی پذیرش درخواست توسط ارائه‌دهنده؛ پذیرش نهایی مالیاتی را اعلام نمی‌کند.
+
+برای ارائه‌دهندهٔ مؤدیان `http_gateway`، شرکت، شناسه حافظه، آدرس HTTPS و کلید API را انتخاب کنید.
+درگاه باید [قرارداد adapter](docs/providers.md) را پیاده کند؛ این آدرس، آدرس مستقیم سامانهٔ مؤدیان نیست.
+اتصال واقعی کاوه‌نگار یا درگاه مؤدیان بدون اطلاعات حساب و آزمون سرویس شما تأیید نشده است.
+
+## API فروشگاه
+
+API برای backend فروشگاه با کاربر احراز هویت‌شدهٔ Frappe است؛ دسترسی Guest ندارد.
+کاربر باید نقش Sales User / Sales Manager / System Manager و مجوزهای مرتبط Item، Item Price و Sales Order داشته باشد.
+کلید API را در مرورگر عمومی قرار ندهید. فقط کالاهای دارای `iran_publish_to_commerce` نمایش داده می‌شوند.
+
+شرکت، مشتری و Price List فروشگاه از تنظیمات سایت می‌آیند. کلاینت فقط کالا، تعداد، تاریخ تحویل و request ID می‌دهد؛
+قیمت و مالیات از ERPNext محاسبه می‌شوند. سفارش Draft ساخته می‌شود و فرآیند تأیید/تحویل عادی ERPNext را طی می‌کند.
+هر حساب API به مشتری تعیین‌شدهٔ همین سایت سفارش می‌دهد؛ مدیریت چند مشتری در frontend باید adapter جداگانه داشته باشد.
+
+| Method | مسیر `/api/method/` | ورودی |
+|---|---|---|
+| GET | `iran_localization.modules.commerce.api.catalog` | `start`, `page_length` (حداکثر ۱۰۰) |
+| POST | `iran_localization.modules.commerce.api.quote` | `items`, `delivery_date` |
+| POST | `iran_localization.modules.commerce.api.create_order` | `items`, `delivery_date`, `request_id` |
+
+```json
+{
+  "items": [{"item_code": "YOUR_ITEM", "qty": 2}],
+  "delivery_date": "2026-12-01",
+  "request_id": "order-client-0001"
+}
+```
+
+تکرار درخواست یکسان همان سفارش را برمی‌گرداند؛ تغییر محتوا با همان request ID خطاست.
+قیمت کاتالوگ، نرخ پایه است؛ برای جمع نهایی و تخفیف‌های ERPNext از `quote` استفاده کنید.
+
+## تست و توسعه
+
+روی سایت تست دارای شرکت و chart of accounts، از پوشهٔ Bench:
+
+```sh
+./env/bin/python apps/iran_localization/scripts/run_tests.py --site YOUR_TEST_SITE
+ruff check apps/iran_localization/iran_localization
+ruff format --check apps/iran_localization/iran_localization
+```
+
+تست‌ها دادهٔ مستقل می‌سازند و rollback می‌کنند؛ import اجباری schema تنظیمات نیز آزموده می‌شود.
+آزمون‌ها شامل حفظ مقدار صفر و Password، defaults نصب تازه، Save و schema import،
+BOM مستقیم/چندسطحی/شاخه مشترک/چرخه، قیمت موجود/جدید، کنترل مجوز، idempotency،
+ارسال آزمایشی، پاسخ نامشخص و چاپ فارسی هستند. APIهای واقعی در تست‌ها mock می‌شوند.
+
+نسخهٔ آزمایش‌شده: Frappe `15.121.3` و ERPNext `15.121.6`.
+ارتقای schema روی سایت موجود آزموده شده؛ ساخت سایت کاملاً جدید و restart واقعی Dev Container جزو بررسی انجام‌شده نیست.
+نسخهٔ `0.1.0` محلی است و انتشار عمومی انجام نشده است.
+
+## منابع پیاده‌سازی
+
+- [قرارداد REST کاوه‌نگار](https://kavenegar.github.io/kavenegar_en/)
+- [اعتبارسنجی شناسهٔ حقوقی در Persian Tools](https://github.com/persian-tools/persian-tools/blob/master/src/modules/legalId/index.ts)
+- [الگوریتم رقم کنترل کد ملی](https://github.com/hamed-zeidabadi/iranian-national-id-validator)
+- [تبدیل تاریخ شمسی با jdatetime](https://pypi.org/project/jdatetime/)
+
+مجوز: MIT.

@@ -1,0 +1,252 @@
+{
+ "doctype": "DocType",
+ "name": "Iran Localization Settings",
+ "module": "Iran Localization",
+ "custom": 0,
+ "engine": "InnoDB",
+ "issingle": 1,
+ "fields": [
+  {
+   "fieldname": "enable_iran_validations",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی اعتبارسنجی اطلاعات ایران",
+   "default": "1",
+   "hidden": 1,
+   "description": "Legacy setting retained for upgrades."
+  },
+  {
+   "fieldname": "enable_official_invoice",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی فاکتور رسمی ایران",
+   "default": "1",
+   "hidden": 1,
+   "description": "Legacy setting retained for upgrades."
+  },
+  {
+   "fieldname": "enable_taxpayer_system",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی اتصال به سامانه مودیان",
+   "default": "0",
+   "hidden": 0
+  },
+  {
+   "fieldname": "modules_section",
+   "fieldtype": "Section Break",
+   "label": "ماژول‌های فعال",
+   "hidden": 0
+  },
+  {
+   "fieldname": "enable_persian_language",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی زبان فارسی",
+   "default": "0",
+   "description": "با ذخیره، زبان پیش‌فرض سیستم و کاربران فعلی فارسی می‌شود. غیرفعال‌سازی، زبان‌های قبلی را بازمی‌گرداند."
+  },
+  {
+   "fieldname": "previous_language_settings",
+   "fieldtype": "Long Text",
+   "label": "Previous Language Settings",
+   "hidden": 1,
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "enable_core_validation",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی اعتبارسنجی اطلاعات ایران",
+   "default": "0",
+   "hidden": 0
+  },
+  {
+   "fieldname": "enable_pricing_automation",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی اتوماسیون قیمت‌گذاری",
+   "default": "0",
+   "hidden": 0
+  },
+  {
+   "fieldname": "enable_official_invoice_module",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی ماژول فاکتور رسمی",
+   "default": "0",
+   "hidden": 0
+  },
+  {
+   "fieldname": "pricing_section",
+   "fieldtype": "Section Break",
+   "label": "تنظیمات قیمت‌گذاری",
+   "hidden": 0
+  },
+  {
+   "fieldname": "raw_material_price_list",
+   "fieldtype": "Link",
+   "label": "لیست قیمت مواد اولیه",
+   "options": "Price List",
+   "hidden": 0
+  },
+  {
+   "fieldname": "selling_price_list",
+   "fieldtype": "Link",
+   "label": "لیست قیمت فروش محصولات",
+   "options": "Price List",
+   "hidden": 0
+  },
+  {
+   "fieldname": "manufacturing_overhead_percent",
+   "fieldtype": "Percent",
+   "label": "درصد سربار تولید",
+   "default": "0",
+   "hidden": 0
+  },
+  {
+   "fieldname": "profit_markup_percent",
+   "fieldtype": "Percent",
+   "label": "درصد سود فروش",
+   "default": "0",
+   "hidden": 0
+  },
+  {
+   "fieldname": "enable_strict_national_id",
+   "fieldtype": "Check",
+   "label": "بررسی رقم کنترل شناسه ملی",
+   "default": "0",
+   "depends_on": "enable_core_validation"
+  },
+  {
+   "fieldname": "sms_section",
+   "fieldtype": "Section Break",
+   "label": "پیامک"
+  },
+  {
+   "fieldname": "enable_sms",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی پیامک",
+   "default": "0"
+  },
+  {
+   "fieldname": "sms_provider",
+   "fieldtype": "Data",
+   "label": "کلید ارائه‌دهنده پیامک",
+   "default": "mock"
+  },
+  {
+   "fieldname": "sms_api_key",
+   "fieldtype": "Password",
+   "label": "کلید API پیامک"
+  },
+  {
+   "fieldname": "sms_sender",
+   "fieldtype": "Data",
+   "label": "شماره فرستنده پیامک"
+  },
+  {
+   "fieldname": "taxpayer_section",
+   "fieldtype": "Section Break",
+   "label": "سامانه مؤدیان"
+  },
+  {
+   "fieldname": "taxpayer_provider",
+   "fieldtype": "Data",
+   "label": "کلید ارائه‌دهنده مؤدیان",
+   "default": "mock"
+  },
+  {
+   "fieldname": "taxpayer_endpoint",
+   "fieldtype": "Data",
+   "label": "نشانی HTTPS درگاه مؤدیان",
+   "depends_on": "eval:doc.taxpayer_provider == \"http_gateway\""
+  },
+  {
+   "fieldname": "taxpayer_company",
+   "fieldtype": "Link",
+   "label": "شرکت ارسال‌کننده به مؤدیان",
+   "options": "Company"
+  },
+  {
+   "fieldname": "taxpayer_api_key",
+   "fieldtype": "Password",
+   "label": "کلید API مؤدیان"
+  },
+  {
+   "fieldname": "taxpayer_memory_id",
+   "fieldtype": "Data",
+   "label": "شناسه حافظه مالیاتی"
+  },
+  {
+   "fieldname": "commerce_section",
+   "fieldtype": "Section Break",
+   "label": "API فروشگاه"
+  },
+  {
+   "fieldname": "enable_commerce_api",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی API فروشگاه",
+   "default": "0"
+  },
+  {
+   "fieldname": "commerce_price_list",
+   "fieldtype": "Link",
+   "label": "لیست قیمت فروشگاه",
+   "options": "Price List"
+  },
+  {
+   "fieldname": "commerce_customer",
+   "fieldtype": "Link",
+   "label": "مشتری سفارش‌های API",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "commerce_company",
+   "fieldtype": "Link",
+   "label": "شرکت سفارش‌های API",
+   "options": "Company"
+  }
+ ],
+ "field_order": [
+  "enable_iran_validations",
+  "enable_official_invoice",
+  "enable_taxpayer_system",
+  "modules_section",
+  "enable_persian_language",
+  "previous_language_settings",
+  "enable_core_validation",
+  "enable_pricing_automation",
+  "enable_official_invoice_module",
+  "pricing_section",
+  "raw_material_price_list",
+  "selling_price_list",
+  "manufacturing_overhead_percent",
+  "profit_markup_percent",
+  "enable_strict_national_id",
+  "sms_section",
+  "enable_sms",
+  "sms_provider",
+  "sms_api_key",
+  "sms_sender",
+  "taxpayer_section",
+  "taxpayer_provider",
+  "taxpayer_endpoint",
+  "taxpayer_company",
+  "taxpayer_api_key",
+  "taxpayer_memory_id",
+  "commerce_section",
+  "enable_commerce_api",
+  "commerce_price_list",
+  "commerce_customer",
+  "commerce_company"
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "modified": "2026-10-06 18:30:00",
+ "creation": "2026-10-06 18:00:00"
+}
