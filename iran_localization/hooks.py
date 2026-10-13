@@ -329,3 +329,12 @@ jinja = {
 doc_events["Sales Invoice"] = {
 	"validate": "iran_localization.modules.official_invoice.service.validate_invoice"
 }
+add_to_apps_screen = [
+    {
+        "name": "iran_localization",
+        "logo": "/assets/iran_localization/images/logo.svg",
+        "title": "Iran Localization",
+        "route": "/app/iran-localization",
+        "sequence_id": 30,
+    }
+]

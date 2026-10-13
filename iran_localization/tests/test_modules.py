@@ -81,6 +81,7 @@ class TestPricing(unittest.TestCase):
 	def setUp(self):
 		self.settings = frappe._dict(
 			enable_pricing_automation=1,
+			update_selling_price_automatically=1,
 			raw_material_price_list="Raw",
 			selling_price_list="Sales",
 			manufacturing_overhead_percent="10",
@@ -101,14 +102,28 @@ class TestPricing(unittest.TestCase):
 			pricing.update_product_prices_from_raw_material(frappe._dict(price_list="Raw"))
 			update.assert_not_called()
 
-	def test_missing_settings_do_not_touch_boms(self):
+	def test_missing_raw_price_list_does_not_touch_boms(self):
+		self.settings.raw_material_price_list = ""
+		with (
+			patch.object(pricing, "get_settings", return_value=self.settings),
+			patch.object(pricing, "_update_dependent_boms_and_prices") as update,
+		):
+			pricing.update_product_prices_from_raw_material(
+				frappe._dict(price_list="Raw", item_code="R")
+			)
+			update.assert_not_called()
+
+	def test_selling_price_list_not_required_when_selling_update_is_disabled(self):
+		self.settings.update_selling_price_automatically = 0
 		self.settings.selling_price_list = ""
 		with (
 			patch.object(pricing, "get_settings", return_value=self.settings),
 			patch.object(pricing, "_update_dependent_boms_and_prices") as update,
 		):
-			pricing.update_product_prices_from_raw_material(frappe._dict(price_list="Raw"))
-			update.assert_not_called()
+			pricing.update_product_prices_from_raw_material(
+				frappe._dict(price_list="Raw", item_code="R")
+			)
+			update.assert_called_once_with("R", self.settings, set())
 
 	def test_guard_clears_on_error(self):
 		with (
@@ -142,6 +157,19 @@ class TestPricing(unittest.TestCase):
 			with self.assertRaises(frappe.ValidationError):
 				pricing._update_dependent_boms_and_prices("R", self.settings, set())
 			get_doc.assert_not_called()
+
+	def test_bom_cost_updates_without_selling_price_update(self):
+		self.settings.update_selling_price_automatically = 0
+		row = frappe._dict(name="A", item="Product", is_default=1)
+		bom = MagicMock(item="Product", quantity=4, total_cost=1000, currency="IRR", uom="Nos")
+		with (
+			patch.object(pricing, "_collect_graph", return_value=({"A": row}, ["A"])),
+			patch.object(frappe, "get_doc", return_value=bom),
+			patch.object(pricing, "_update_selling_price") as update,
+		):
+			pricing._update_dependent_boms_and_prices("R", self.settings, set())
+			bom.update_cost.assert_called_once_with(update_parent=False)
+			update.assert_not_called()
 
 	def test_quantity_and_markup_are_applied_per_output_unit(self):
 		row = frappe._dict(name="A", item="Product", is_default=1)

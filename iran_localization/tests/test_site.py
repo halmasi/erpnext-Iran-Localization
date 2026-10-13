@@ -119,6 +119,7 @@ class TestSite(unittest.TestCase):
 		self.settings.raw_material_price_list = self.raw_list
 		self.settings.selling_price_list = self.sales_list
 		self.settings.enable_pricing_automation = 1
+		self.settings.update_selling_price_automatically = 1
 		self.settings.manufacturing_overhead_percent = 0
 		self.settings.profit_markup_percent = 0
 		self.settings.save()

@@ -65,6 +65,14 @@
    "hidden": 0
   },
   {
+ "fieldname": "update_selling_price_automatically",
+ "fieldtype": "Check",
+ "label": "به‌روزرسانی خودکار قیمت فروش",
+ "default": "0",
+ "depends_on": "eval:doc.enable_pricing_automation",
+ "hidden": 0
+},
+  {
    "fieldname": "enable_official_invoice_module",
    "fieldtype": "Check",
    "label": "فعال‌سازی ماژول فاکتور رسمی",
@@ -211,6 +219,7 @@
   "previous_language_settings",
   "enable_core_validation",
   "enable_pricing_automation",
+  "update_selling_price_automatically",
   "enable_official_invoice_module",
   "pricing_section",
   "raw_material_price_list",

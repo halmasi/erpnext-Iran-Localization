@@ -15,12 +15,17 @@ def update_product_prices_from_raw_material(doc, method=None):
 	settings = get_settings()
 	if not settings.enable_pricing_automation:
 		return
-	if not settings.raw_material_price_list or not settings.selling_price_list:
+	if not settings.raw_material_price_list:
 		return
 	if doc.price_list != settings.raw_material_price_list:
 		return
-	if settings.raw_material_price_list == settings.selling_price_list:
-		frappe.throw(_("Raw material and selling Price Lists must be different."))
+	if settings.update_selling_price_automatically:
+		if not settings.selling_price_list:
+			frappe.throw(
+				_("A selling Price List is required when automatic selling price updates are enabled.")
+			)
+		if settings.raw_material_price_list == settings.selling_price_list:
+			frappe.throw(_("Raw material and selling Price Lists must be different."))
 
 	frappe.flags.iran_pricing_running = True
 	try:
@@ -73,6 +78,8 @@ def _update_dependent_boms_and_prices(item_code, settings, visited_boms):
 		bom = frappe.get_doc("BOM", name)
 		bom.update_cost(update_parent=False)
 		bom.reload()
+		if not settings.update_selling_price_automatically:
+			continue
 		if not nodes[name].is_default:
 			continue
 		if flt(bom.quantity) <= 0:
