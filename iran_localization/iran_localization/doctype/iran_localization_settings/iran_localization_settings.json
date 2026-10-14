@@ -137,6 +137,13 @@
    "hidden": 0
   },
   {
+   "fieldname": "disable_quantity_and_price_decimals",
+   "fieldtype": "Check",
+   "label": "حذف ممیز و صفرهای اعشار از تعداد و قیمت",
+   "description": "تعداد، نرخ، قیمت و مبلغ را با دقت صفر نمایش و ثبت می‌کند؛ مناسب برای مبالغ ریالی.",
+   "default": "0"
+  },
+  {
    "fieldname": "sms_section",
    "fieldtype": "Section Break",
    "label": "پیامک"
@@ -249,6 +256,7 @@
   "enable_strict_national_id",
   "calendar_section",
   "enable_persian_calendar",
+  "disable_quantity_and_price_decimals",
   "sms_section",
   "enable_sms",
   "sms_provider",

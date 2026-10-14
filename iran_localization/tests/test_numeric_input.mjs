@@ -9,6 +9,7 @@ const context = vm.createContext({
         ui: { form: { ControlData: class {} } },
         utils: { eval_expression: (value) => value },
         provide: () => {},
+        boot: { iran_localization: { disable_quantity_and_price_decimals: false }, sysdefaults: {} },
     },
     iran_localization: {},
     cint: (value, fallback) => Number.isNaN(parseInt(value)) ? fallback : parseInt(value),
@@ -47,4 +48,18 @@ test("decimal currency input and original values are preserved", () => {
     assert.equal(normalize(0), 0);
     assert.equal(normalize(null), null);
     assert.equal(normalize(undefined), undefined);
+});
+
+test("optional zero precision applies to prices and quantities", () => {
+    context.frappe.boot.iran_localization.disable_quantity_and_price_decimals = true;
+    const qty = new context.frappe.ui.form.ControlFloat();
+    qty.df = { fieldname: "qty", fieldtype: "Float" };
+    assert.equal(qty.get_precision(), 0);
+    const unrelated = new context.frappe.ui.form.ControlFloat();
+    unrelated.df = { fieldname: "conversion_factor", fieldtype: "Float" };
+    unrelated.get_number_format = () => undefined;
+    assert.notEqual(unrelated.get_precision(), 0);
+    const amount = new context.frappe.ui.form.ControlCurrency();
+    amount.df = { fieldname: "grand_total", fieldtype: "Currency" };
+    assert.equal(amount.get_precision(), 0);
 });
