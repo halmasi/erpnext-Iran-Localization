@@ -25,6 +25,7 @@ def main():
 				"iran_localization.tests.test_modules",
 				"iran_localization.tests.test_site",
 				"iran_localization.tests.test_persian_calendar",
+				"iran_localization.tests.test_banking",
 			]
 		)
 		result = unittest.TextTestRunner(verbosity=2).run(suite)

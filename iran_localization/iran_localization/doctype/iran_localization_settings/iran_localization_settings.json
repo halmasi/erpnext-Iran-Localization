@@ -6,6 +6,10 @@
  "engine": "InnoDB",
  "issingle": 1,
  "fields": [
+  {"fieldname": "iran_banking_section", "fieldtype": "Section Break", "label": "حساب‌های بانکی ایران"},
+  {"fieldname": "enable_iran_sheba", "fieldtype": "Check", "label": "فعال‌سازی شماره شبا و اعتبارسنجی آن", "default": "0"},
+  {"fieldname": "enable_iran_card_number", "fieldtype": "Check", "label": "فعال‌سازی شماره کارت بانکی", "default": "0"},
+  {"fieldname": "enable_iran_bank_list", "fieldtype": "Check", "label": "فعال‌سازی فهرست بانک‌های ایرانی", "default": "0", "description": "بانک‌های اولیه اضافه می‌شوند. بانک جدید را از حساب بانکی اضافه کنید؛ غیرفعال‌سازی، بانک‌ها و اطلاعات ذخیره‌شده را حذف نمی‌کند."},
   {
    "fieldname": "enable_iran_validations",
    "fieldtype": "Check",
@@ -223,6 +227,10 @@
   }
  ],
  "field_order": [
+  "iran_banking_section",
+  "enable_iran_sheba",
+  "enable_iran_card_number",
+  "enable_iran_bank_list",
   "enable_iran_validations",
   "enable_official_invoice",
   "enable_taxpayer_system",

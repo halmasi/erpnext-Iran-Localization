@@ -142,6 +142,24 @@ class TestSite(unittest.TestCase):
 			.name
 		)
 
+	def test_quotation_item_selection_uses_configured_selling_price(self):
+		item = self.item("Quoted")
+		self.item_price(item, 6400000, self.sales_list)
+		self.settings.selling_price_list = self.sales_list
+		self.settings.save()
+		doc = frappe.new_doc("Quotation")
+		doc.company = self.company
+		doc.quotation_to = "Customer"
+		doc.party_name = self.customer()
+		doc.currency = self.currency
+		doc.conversion_rate = 1
+		doc.selling_price_list = "Standard Selling"
+		doc.append("items", {"item_code": item, "qty": 2})
+		doc.process_item_selection(1, True)
+		self.assertEqual(doc.selling_price_list, self.sales_list)
+		self.assertEqual(doc.items[0].rate, 6400000)
+		self.assertEqual(doc.items[0].amount, 12800000)
+
 	def test_saved_settings_survive_forced_schema_import(self):
 		from frappe.modules.import_file import import_file_by_path
 

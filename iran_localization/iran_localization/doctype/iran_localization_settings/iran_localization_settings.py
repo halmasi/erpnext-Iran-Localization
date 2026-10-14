@@ -9,6 +9,8 @@ class IranLocalizationSettings(Document):
 		from iran_localization.modules.core.language import apply_language_settings
 
 		apply_language_settings(self)
+		from iran_localization.modules.banking import apply_settings
+		apply_settings(self)
 
 	def validate(self):
 		if self.enable_pricing_automation:

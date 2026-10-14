@@ -298,6 +298,7 @@ fixtures = [
 ]
 
 doc_events = {
+	"Bank Account": {"validate": "iran_localization.modules.banking.validate_account"},
 	"Sales Invoice": {"before_validate": "iran_localization.modules.pricing.service.fill_missing_sales_invoice_rates"},
 	"Company": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
 	"Customer": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
@@ -310,10 +311,12 @@ doc_events = {
 required_apps = ["erpnext"]
 extend_doctype_class = {
 	"Sales Invoice": ["iran_localization.modules.pricing.invoice.SalesInvoicePricingMixin"],
+	"Quotation": ["iran_localization.modules.pricing.invoice.SalesInvoicePricingMixin"],
 }
 after_install = "iran_localization.install.after_install"
 after_migrate = "iran_localization.install.after_migrate"
 doctype_js = {
+	"Bank Account": "public/js/bank_account.js",
 	"Sales Invoice": "public/js/sales_invoice.js",
 	"Iran Localization Settings": "public/js/settings.js",
 	"Iran Integration Request": "public/js/integration_request.js",
@@ -346,6 +349,7 @@ add_to_apps_screen = [
 # Optional Desk Date adapter; all model/API dates remain Gregorian.
 extend_bootinfo = "iran_localization.modules.persian_calendar.service.extend_bootinfo"
 app_include_js = [
+    "/assets/iran_localization/js/numeric_input.js",
     "/assets/iran_localization/js/persian_calendar/conversion.js",
     "/assets/iran_localization/js/persian_calendar/date_picker.js",
     "/assets/iran_localization/js/persian_calendar/date_control.js",

@@ -18,14 +18,18 @@ class SalesInvoicePricingMixin:
 		result = super().process_item_selection(item_idx, reset_item_details)
 		item = self.get("items", {"idx": item_idx})[0]
 		if not item.rate:
+			customer = self.get("customer")
+			if self.doctype == "Quotation" and self.get("quotation_to") == "Customer":
+				customer = self.get("party_name")
+			date = self.get("posting_date") or self.get("transaction_date") or today()
 			prices = frappe.get_all("Item Price", filters={
 				"item_code": item.item_code, "price_list": self.selling_price_list,
-				"customer": ["in", ["", self.customer]],
+				"customer": ["in", ["", customer or ""]],
 			}, fields=["uom", "valid_from", "valid_upto"])
 			units = frappe.get_all("UOM Conversion Detail", filters={"parent": item.item_code}, pluck="uom")
 			valid_units = {p.uom for p in prices if p.uom in units
-				and (not p.valid_from or str(p.valid_from) <= str(self.posting_date or today()))
-				and (not p.valid_upto or str(p.valid_upto) >= str(self.posting_date or today()))}
+				and (not p.valid_from or str(p.valid_from) <= str(date))
+				and (not p.valid_upto or str(p.valid_upto) >= str(date))}
 			if len(valid_units) == 1:
 				item.uom = valid_units.pop()
 				result = super().process_item_selection(item_idx, False)
