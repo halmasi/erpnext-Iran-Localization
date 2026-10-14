@@ -1,16 +1,10 @@
 import frappe
 from frappe import _
-from frappe.utils import getdate
 
 from iran_localization.modules.core.settings import get_settings
+from iran_localization.modules.persian_calendar.utils import jalali_date
 
 IDENTITY_FIELDS = ("national_id", "economic_code", "registration_number", "postal_code")
-
-
-def jalali_date(value):
-	import jdatetime
-
-	return jdatetime.date.fromgregorian(date=getdate(value)).strftime("%Y/%m/%d")
 
 
 def _party(doctype, name, invoice, prefix):

@@ -1,0 +1,18 @@
+.iran-jalali-picker {
+    position: fixed;
+    z-index: 1100;
+    width: 294px;
+    padding: 12px;
+    background: var(--fg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    direction: rtl;
+}
+.iran-jalali-picker[hidden] { display: none; }
+.iran-jalali-header, .iran-jalali-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.iran-jalali-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin: 10px 0; text-align: center; }
+.iran-jalali-grid > span { font-size: 9px; padding: 4px 0; }
+.iran-jalali-grid > button { min-height: 30px; }
+.iran-jalali-grid > button:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }

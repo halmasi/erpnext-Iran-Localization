@@ -121,6 +121,18 @@
    "depends_on": "enable_core_validation"
   },
   {
+   "fieldname": "calendar_section",
+   "fieldtype": "Section Break",
+   "label": "تقویم و بومی‌سازی تاریخ"
+  },
+  {
+   "fieldname": "enable_persian_calendar",
+   "fieldtype": "Check",
+   "label": "فعال‌سازی تقویم شمسی",
+   "default": "0",
+   "hidden": 0
+  },
+  {
    "fieldname": "sms_section",
    "fieldtype": "Section Break",
    "label": "پیامک"
@@ -227,6 +239,8 @@
   "manufacturing_overhead_percent",
   "profit_markup_percent",
   "enable_strict_national_id",
+  "calendar_section",
+  "enable_persian_calendar",
   "sms_section",
   "enable_sms",
   "sms_provider",

@@ -1,11 +1,13 @@
 frappe.ui.form.on("Iran Localization Settings", {
     after_save(frm) {
-        if (frm._persian_language !== Boolean(frm.doc.enable_persian_language)) {
+        if (frm._persian_language !== Boolean(frm.doc.enable_persian_language) ||
+            frm._persian_calendar !== Boolean(frm.doc.enable_persian_calendar)) {
             window.location.reload();
         }
     },
     onload(frm) {
         frm._persian_language = Boolean(frm.doc.enable_persian_language);
+        frm._persian_calendar = Boolean(frm.doc.enable_persian_calendar);
     },
     refresh(frm) {
         frm.set_query("raw_material_price_list", () => ({ filters: { buying: 1, enabled: 1 } }));

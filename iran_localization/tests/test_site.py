@@ -371,3 +371,19 @@ class TestSite(unittest.TestCase):
 			queue_sms("09123456789", "test", self.prefix)
 		with self.assertRaises(frappe.PermissionError):
 			api.catalog()
+
+	def test_calendar_boot_and_canonical_storage(self):
+		from iran_localization.modules.persian_calendar.service import extend_bootinfo
+
+		self.assertEqual(frappe.get_meta("Iran Localization Settings").get_field("enable_persian_calendar").default, "0")
+		doc = frappe.get_doc({"doctype": "ToDo", "description": self.prefix + " calendar", "date": "2026-10-13"}).insert()
+		for enabled in (1, 0):
+			frappe.db.set_single_value("Iran Localization Settings", "enable_persian_calendar", enabled)
+			frappe.clear_document_cache("Iran Localization Settings", "Iran Localization Settings")
+			boot = frappe._dict()
+			extend_bootinfo(boot)
+			self.assertEqual(boot.iran_localization["enable_persian_calendar"], bool(enabled))
+			doc.reload()
+			self.assertEqual(str(doc.date), "2026-10-13")
+			self.assertEqual(str(frappe.db.get_value("ToDo", doc.name, "date")), "2026-10-13")
+		self.assertEqual(frappe.render_template('{{ jalali_date("2026-10-13") }}', {}), "1405/07/21")

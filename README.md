@@ -455,3 +455,21 @@ ERPNext 15.121.6 / 16.50.0
 # مجوز
 
 `MIT`
+
+## تقویم شمسی / Persian Calendar
+
+تقویم شمسی اختیاری است و در نصب جدید خاموش است. در **Iran Localization Settings**، گزینهٔ **فعال‌سازی تقویم شمسی** (`enable_persian_calendar`) را فعال کنید و ذخیره کنید؛ Desk دوباره بارگذاری می‌شود. فیلدهای استاندارد `Date` در فرم، ردیف‌های جدول قابل ویرایش، دیالوگ و فیلترهای استاندارد لیست و گزارش با قالب `YYYY/MM/DD` نمایش داده می‌شوند. ورود ارقام فارسی، عربی و انگلیسی، انتخاب روز، ماه قبل/بعد، امروز و پاک کردن پشتیبانی می‌شود. هفته از شنبه آغاز می‌شود. تغییر این تنظیم فقط نمایش و ورود تاریخ را تغییر می‌دهد؛ دیتابیس، API و منطق حسابداری همچنان میلادی هستند.
+
+This optional feature targets **Frappe/ERPNext v16**. Enable **فعال‌سازی تقویم شمسی** in **Iran Localization Settings** and save; Desk reloads. Standard `Date` controls use a local Jalali picker and manual `YYYY/MM/DD` input, including English, Persian and Arabic digits. This covers form and editable grid fields, dialogs, and list/query report filters built with standard Date controls. `2026-10-13` displays as `1405/07/21`; entering that Jalali date stores `2026-10-13`. Disable and save to restore standard Frappe controls. Other users should reload Desk after the site setting changes.
+
+**Limitations / محدودیت‌ها:** `Datetime` and `Time` remain standard Frappe controls, preserving timezone behavior. List/report result cells, calendar views, DateRange/Between filters, relative-date expressions, custom third-party widgets and website forms are not converted. Date input must use the full year/month/day format; Gregorian values passed to `set_value`, `frm.set_value` and API calls remain Gregorian. Invalid manual dates retain the previous model value and show a validation message. The picker supports Tab/Shift+Tab, Enter, Escape, and ArrowDown from the input; full arrow-key day-grid navigation and direct month/year selection are not implemented.
+
+Print formats can opt in independently of the Desk setting:
+
+```jinja
+{{ jalali_date(doc.posting_date) }}
+```
+
+Python helpers are `iran_localization.modules.persian_calendar.utils.to_jalali` and `to_gregorian`. They share the existing `jdatetime` dependency used by official invoices. Browser conversion uses deterministic UTC day arithmetic with the same 33-year leap rule; it does not use browser locale conversion or remote scripts. Valid Jalali years are 1–9377, subject to the Gregorian year limit of 9999. No accounting dates or existing documents are rewritten.
+
+Deploy with normal `bench --site erp.localhost migrate`, `bench build --app iran_localization`, and `bench --site erp.localhost clear-cache`. No Custom Field fixture or manual database change is required. See [calendar architecture and validation](docs/PERSIAN_CALENDAR.md) for checks and manual test steps.

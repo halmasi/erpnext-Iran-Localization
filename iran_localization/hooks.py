@@ -298,6 +298,7 @@ fixtures = [
 ]
 
 doc_events = {
+	"Sales Invoice": {"before_validate": "iran_localization.modules.pricing.service.fill_missing_sales_invoice_rates"},
 	"Company": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
 	"Customer": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
 	"Supplier": {"validate": "iran_localization.modules.core.validation.validate_iran_fields"},
@@ -307,6 +308,9 @@ doc_events = {
 }
 
 required_apps = ["erpnext"]
+extend_doctype_class = {
+	"Sales Invoice": ["iran_localization.modules.pricing.invoice.SalesInvoicePricingMixin"],
+}
 after_install = "iran_localization.install.after_install"
 after_migrate = "iran_localization.install.after_migrate"
 doctype_js = {
@@ -338,3 +342,13 @@ add_to_apps_screen = [
         "sequence_id": 30,
     }
 ]
+
+# Optional Desk Date adapter; all model/API dates remain Gregorian.
+extend_bootinfo = "iran_localization.modules.persian_calendar.service.extend_bootinfo"
+app_include_js = [
+    "/assets/iran_localization/js/persian_calendar/conversion.js",
+    "/assets/iran_localization/js/persian_calendar/date_picker.js",
+    "/assets/iran_localization/js/persian_calendar/date_control.js",
+]
+app_include_css = ["/assets/iran_localization/css/persian_calendar.css"]
+jinja["methods"].append("iran_localization.modules.persian_calendar.utils.jalali_date")

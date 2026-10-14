@@ -9,6 +9,65 @@ from frappe.utils import flt, getdate, today
 from iran_localization.modules.core.settings import get_settings
 
 
+@frappe.whitelist()
+def get_sales_item_price(item_code, price_list=None, uom=None):
+	"""Return the current selling price used by the invoice item picker."""
+	if not item_code:
+		return None
+	rows = frappe.db.sql(
+		"""select ip.price_list_rate, ip.valid_from, ip.valid_upto, ip.uom
+		from `tabItem Price` ip join `tabPrice List` pl on pl.name = ip.price_list
+		where ip.item_code=%s and pl.selling=1
+		and (%s is null or %s='' or ip.price_list=%s)
+		and (%s is null or %s='' or ip.uom=%s or ip.uom='')
+		order by (ip.price_list=%s) desc, ip.valid_from desc, (ip.uom=%s) desc""",
+		(item_code, price_list, price_list, price_list, uom, uom, uom, price_list, uom),
+		as_dict=True,
+	)
+	if not rows and price_list:
+		return get_sales_item_price(item_code, None, uom)
+	date = getdate(today())
+	for row in rows:
+		if row.valid_from and getdate(row.valid_from) > date:
+			continue
+		if row.valid_upto and getdate(row.valid_upto) < date:
+			continue
+		return row.price_list_rate
+	return None
+
+
+def fill_missing_sales_invoice_rates(doc, method=None):
+	"""Fill an empty invoice-row rate from the invoice's active Item Price."""
+	if doc.doctype != "Sales Invoice" or not doc.get("selling_price_list"):
+		return
+	for row in doc.get("items") or []:
+		if not row.item_code or flt(row.rate):
+			continue
+		filters = {"item_code": row.item_code, "price_list": doc.selling_price_list}
+		if row.uom:
+			filters["uom"] = ["in", [row.uom, ""]]
+		prices = frappe.get_all("Item Price", filters=filters, fields=["price_list_rate", "valid_from", "valid_upto", "uom"], order_by="valid_from desc, uom desc")
+		if not prices:
+			# A legacy invoice may retain Standard Selling while the active selling
+			# list was renamed. Use a matching active selling list as a safe fallback.
+			prices = frappe.db.sql(
+				"""select ip.price_list_rate, ip.valid_from, ip.valid_upto, ip.uom
+				from `tabItem Price` ip join `tabPrice List` pl on pl.name = ip.price_list
+				where ip.item_code=%s and pl.selling=1
+				order by ip.valid_from desc, ip.uom desc""",
+				(row.item_code,), as_dict=True,
+			)
+		date = getdate(today())
+		for price in prices:
+			if price.valid_from and getdate(price.valid_from) > date:
+				continue
+			if price.valid_upto and getdate(price.valid_upto) < date:
+				continue
+			row.rate = price.price_list_rate
+			row.price_list_rate = price.price_list_rate
+			break
+
+
 def update_product_prices_from_raw_material(doc, method=None):
 	if frappe.flags.iran_pricing_running:
 		return
